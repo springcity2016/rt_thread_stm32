@@ -1,0 +1,42 @@
+mainmenu "RT-Thread Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "rt-thread"
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+
+
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "libraries/Kconfig"
+source "board/Kconfig"
+
+menu "hello module"
+
+    config RT_USING_HELLO
+        bool "Enable hello module"
+        default y
+        help
+        this hello module only used for test
+
+    config RT_HELLO_NAME
+        string "Hello name"
+        default "hello"
+    
+    config RT_HELLO_VALUE
+        int "Hello value"
+        default 8
+
+endmenu
