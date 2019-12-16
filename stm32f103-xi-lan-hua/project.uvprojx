@@ -335,9 +335,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER, STM32F103xE</Define>
+              <Define>USE_HAL_DRIVER, RT_USING_ARM_LIBC, STM32F103xE</Define>
               <Undefine></Undefine>
-              <IncludePath>.;rt-thread\include;applications;board;board\CubeMX_Config\Inc;libraries\HAL_Drivers;libraries\HAL_Drivers\config;rt-thread\libcpu\arm\common;rt-thread\libcpu\arm\cortex-m3;rt-thread\components\drivers\include;rt-thread\components\drivers\include;rt-thread\components\drivers\include;rt-thread\components\finsh;rt-thread\components\libc\compilers\common;libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;libraries\STM32F1xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;rt-thread\include;applications;board;board\CubeMX_Config\Inc;libraries\HAL_Drivers;libraries\HAL_Drivers\config;rt-thread\libcpu\arm\common;rt-thread\libcpu\arm\cortex-m3;rt-thread\components\drivers\include;rt-thread\components\drivers\include;rt-thread\components\drivers\include;rt-thread\components\drivers\include;rt-thread\components\finsh;rt-thread\components\libc\compilers\armlibc;rt-thread\components\libc\compilers\common;libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;libraries\STM32F1xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -462,6 +462,26 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
+              <FileName>drv_oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\drv_oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\list.c</FilePath>
+            </File>
+            <File>
+              <FileName>list_iterator.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\list_iterator.c</FilePath>
+            </File>
+            <File>
+              <FileName>list_node.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\list_node.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
@@ -475,6 +495,11 @@
               <FileName>user_btn.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\user_btn.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_snake.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\user_snake.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -550,6 +575,16 @@
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>rt-thread\components\drivers\misc\pin.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>rt-thread\components\drivers\rtc\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>soft_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>rt-thread\components\drivers\rtc\soft_rtc.c</FilePath>
             </File>
             <File>
               <FileName>serial.c</FileName>
@@ -632,6 +667,21 @@
           <GroupName>libc</GroupName>
           <Files>
             <File>
+              <FileName>libc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>rt-thread\components\libc\compilers\armlibc\libc.c</FilePath>
+            </File>
+            <File>
+              <FileName>mem_std.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>rt-thread\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+            <File>
+              <FileName>stubs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>rt-thread\components\libc\compilers\armlibc\stubs.c</FilePath>
+            </File>
+            <File>
               <FileName>time.c</FileName>
               <FileType>1</FileType>
               <FilePath>rt-thread\components\libc\compilers\common\time.c</FilePath>
@@ -710,6 +760,16 @@
               <FileName>stm32f1xx_hal_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_rtc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rtc_ex.c</FilePath>
             </File>
           </Files>
         </Group>

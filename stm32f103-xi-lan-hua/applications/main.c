@@ -22,27 +22,24 @@
 int main(void)
 {
     int count = 1;
-    /* set LED0 pin mode to output */
-    // rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
-    // rt_pin_mode(LED4_PIN, PIN_MODE_OUTPUT);
-    // rt_pin_mode(LED5_PIN, PIN_MODE_OUTPUT);
-    // rt_pin_mode(LED6_PIN, PIN_MODE_OUTPUT);
+    rt_err_t _ret = RT_EOK;
+    time_t now;
+
     user_btn_cfg_init();
+
+    _ret = set_date(2019, 12, 16);
+    rt_kprintf(" set date: 2019-12-16! ret: %d, %d \n", _ret, __LINE__);
+
+    _ret = set_time(23, 36, 0);
+    rt_kprintf(" set time: 23-36-00! ret: %d, %d \n", _ret, __LINE__);
 
     while (count++)
     {
-        // rt_kprintf(" set pin3 high level! %d\n", __LINE__);
-        // rt_pin_write(LED1_PIN, PIN_HIGH);
-        // rt_pin_write(LED4_PIN, PIN_HIGH);
-        // rt_pin_write(LED5_PIN, PIN_HIGH);
-        // rt_pin_write(LED6_PIN, PIN_HIGH);
-        // rt_thread_mdelay(1000);
-        // rt_kprintf(" set pin3 low level! %d\n", __LINE__);
-        // rt_pin_write(LED1_PIN, PIN_LOW);
-        // rt_pin_write(LED4_PIN, PIN_LOW);
-        // rt_pin_write(LED5_PIN, PIN_LOW);
-        // rt_pin_write(LED6_PIN, PIN_LOW);
-        rt_thread_mdelay(500);
+        if ((count % 10) ==  0) {
+            now = time(RT_NULL);
+            rt_kprintf("%s \n", ctime(&now));
+        }
+        rt_thread_mdelay(1000);
     }
 
     return RT_EOK;
