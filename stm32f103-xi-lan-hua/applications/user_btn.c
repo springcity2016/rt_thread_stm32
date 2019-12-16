@@ -8,20 +8,29 @@
 #include <board.h>
 
 
-#define KEY1_BTN                GET_PIN(A, 13)      // K1
-#define KEY2_BTN                GET_PIN(D, 6)   // K2
-#define KEY3_BTN                GET_PIN(E, 0)       // K3
+// #define KEY1_BTN                GET_PIN(A, 13)      // K1
+// #define KEY2_BTN                GET_PIN(D, 6)       // K2
+// #define KEY3_BTN                GET_PIN(E, 0)       // K3
+// #define KEY4_BTN                GET_PIN(E, 0)       // K3
+
+#define KEY1_BTN                GET_PIN(E, 11)      // K1
+#define KEY2_BTN                GET_PIN(E, 12)       // K2
+#define KEY3_BTN                GET_PIN(E, 13)       // K3
+#define KEY4_BTN                GET_PIN(E, 14)       // K4
 
 struct Button key1_btn;
 struct Button key2_btn;
 struct Button key3_btn;
+struct Button key4_btn;
 static void key1_btn_callback(void *params);
 static void key2_btn_callback(void *params);
 static void key3_btn_callback(void *params);
+static void key4_btn_callback(void *params);
 
 static rt_uint8_t read_key1_pindata(void);
 static rt_uint8_t read_key2_pindata(void);
 static rt_uint8_t read_key3_pindata(void);
+static rt_uint8_t read_key4_pindata(void);
 static void gpio_irq_callback(void *args);
 
 // 定时器管理函数
@@ -38,6 +47,7 @@ typedef struct _btn_timer_t
     unsigned char bf_key1st;
     unsigned char bf_key2nd;
     unsigned char bf_key3rd;
+    unsigned char bf_key4th;
 
     unsigned int delay_cnt;
 
@@ -49,17 +59,20 @@ void user_btn_cfg_init(void)
 {
     memset(&mst_btn_timer, 0, sizeof(btn_timer_t));
 
-    rt_pin_mode(KEY1_BTN, PIN_MODE_INPUT_PULLUP);
-    rt_pin_mode(KEY2_BTN, PIN_MODE_INPUT_PULLUP);
-    rt_pin_mode(KEY3_BTN, PIN_MODE_INPUT_PULLUP);
-    rt_pin_attach_irq(KEY1_BTN, PIN_IRQ_MODE_FALLING, gpio_irq_callback, (void *)KEY1_BTN);
-    rt_pin_attach_irq(KEY2_BTN, PIN_IRQ_MODE_FALLING, gpio_irq_callback, (void *)KEY2_BTN);
-    rt_pin_attach_irq(KEY3_BTN, PIN_IRQ_MODE_FALLING, gpio_irq_callback, (void *)KEY3_BTN);
+    rt_pin_mode(KEY1_BTN, PIN_MODE_INPUT_PULLDOWN);
+    rt_pin_mode(KEY2_BTN, PIN_MODE_INPUT_PULLDOWN);
+    rt_pin_mode(KEY3_BTN, PIN_MODE_INPUT_PULLDOWN);
+    rt_pin_mode(KEY4_BTN, PIN_MODE_INPUT_PULLDOWN);
+    rt_pin_attach_irq(KEY1_BTN, PIN_IRQ_MODE_RISING, gpio_irq_callback, (void *)KEY1_BTN);
+    rt_pin_attach_irq(KEY2_BTN, PIN_IRQ_MODE_RISING, gpio_irq_callback, (void *)KEY2_BTN);
+    rt_pin_attach_irq(KEY3_BTN, PIN_IRQ_MODE_RISING, gpio_irq_callback, (void *)KEY3_BTN);
+    rt_pin_attach_irq(KEY4_BTN, PIN_IRQ_MODE_RISING, gpio_irq_callback, (void *)KEY4_BTN);
     rt_pin_irq_enable(KEY1_BTN, PIN_IRQ_ENABLE);
     rt_pin_irq_enable(KEY2_BTN, PIN_IRQ_ENABLE);
     rt_pin_irq_enable(KEY3_BTN, PIN_IRQ_ENABLE);
+    rt_pin_irq_enable(KEY4_BTN, PIN_IRQ_ENABLE);
 
-    button_init(&key1_btn, read_key1_pindata, 0);
+    button_init(&key1_btn, read_key1_pindata, 1);
     button_attach(&key1_btn, PRESS_DOWN, key1_btn_callback);
     button_attach(&key1_btn, PRESS_UP, key1_btn_callback);
     button_attach(&key1_btn, PRESS_REPEAT, key1_btn_callback);
@@ -69,7 +82,7 @@ void user_btn_cfg_init(void)
     button_attach(&key1_btn, LONG_PRESS_HOLD, key1_btn_callback);
     button_start(&key1_btn);
 
-    button_init(&key2_btn, read_key2_pindata, 0);
+    button_init(&key2_btn, read_key2_pindata, 1);
     button_attach(&key2_btn, PRESS_DOWN, key2_btn_callback);
     button_attach(&key2_btn, PRESS_UP, key2_btn_callback);
     button_attach(&key2_btn, PRESS_REPEAT, key2_btn_callback);
@@ -79,7 +92,7 @@ void user_btn_cfg_init(void)
     button_attach(&key2_btn, LONG_PRESS_HOLD, key2_btn_callback);
     button_start(&key2_btn);
 
-    button_init(&key3_btn, read_key3_pindata, 0);
+    button_init(&key3_btn, read_key3_pindata, 1);
     button_attach(&key3_btn, PRESS_DOWN, key3_btn_callback);
     button_attach(&key3_btn, PRESS_UP, key3_btn_callback);
     button_attach(&key3_btn, PRESS_REPEAT, key3_btn_callback);
@@ -88,6 +101,16 @@ void user_btn_cfg_init(void)
     button_attach(&key3_btn, LONG_RRESS_START, key3_btn_callback);
     button_attach(&key3_btn, LONG_PRESS_HOLD, key3_btn_callback);
     button_start(&key3_btn);
+
+    button_init(&key4_btn, read_key4_pindata, 1);
+    button_attach(&key4_btn, PRESS_DOWN, key4_btn_callback);
+    button_attach(&key4_btn, PRESS_UP, key4_btn_callback);
+    button_attach(&key4_btn, PRESS_REPEAT, key4_btn_callback);
+    button_attach(&key4_btn, SINGLE_CLICK, key4_btn_callback);
+    button_attach(&key4_btn, DOUBLE_CLICK, key4_btn_callback);
+    button_attach(&key4_btn, LONG_RRESS_START, key4_btn_callback);
+    button_attach(&key4_btn, LONG_PRESS_HOLD, key4_btn_callback);
+    button_start(&key4_btn);
 
     btn_timer = rt_timer_create("btn_timer", btn_timer_callback, NULL, TICKS_INTERVAL, RT_TIMER_FLAG_PERIODIC);
     if (btn_timer == NULL) {
@@ -104,27 +127,27 @@ static void key1_btn_callback(void *params)
     switch (key_evt)
     {
     case PRESS_DOWN:
-        rt_kprintf(" press down! %d \n", __LINE__);
+        rt_kprintf(" key1, press down! %d \n", __LINE__);
         break;
 	case PRESS_UP:
-        rt_kprintf(" press up! %d \n", __LINE__);
+        rt_kprintf(" key1, press up! %d \n", __LINE__);
         mst_btn_timer.bf_key1st = 0;
         mst_btn_timer.delay_cnt = 0;
         break;
 	case PRESS_REPEAT:
-        rt_kprintf(" press repeat! %d \n", __LINE__);
+        rt_kprintf(" key1, press repeat! %d \n", __LINE__);
         break;
 	case SINGLE_CLICK:
-        rt_kprintf(" single click! %d \n", __LINE__);
+        rt_kprintf(" key1, single click! %d \n", __LINE__);
         break;
 	case DOUBLE_CLICK:
-        rt_kprintf(" double click! %d \n", __LINE__);
+        rt_kprintf(" key1, double click! %d \n", __LINE__);
         break;
 	case LONG_RRESS_START:
-        rt_kprintf(" long press start! %d \n", __LINE__);
+        rt_kprintf(" key1, long press start! %d \n", __LINE__);
         break;
 	case LONG_PRESS_HOLD:
-        rt_kprintf(" long press hold! %d \n", __LINE__);
+        rt_kprintf(" key1, long press hold! %d \n", __LINE__);
         break;
     default:
         break;
@@ -202,6 +225,41 @@ static void key3_btn_callback(void *params)
 
 }
 
+static void key4_btn_callback(void *params)
+{
+    rt_uint8_t key_evt;
+    key_evt = get_button_event((struct Button *)params);
+    switch (key_evt)
+    {
+    case PRESS_DOWN:
+        rt_kprintf(" key4, press down! %d \n", __LINE__);
+        break;
+	case PRESS_UP:
+        rt_kprintf(" key4, press up! %d \n", __LINE__);
+        mst_btn_timer.bf_key4th = 0;
+        mst_btn_timer.delay_cnt = 0;
+        break;
+	case PRESS_REPEAT:
+        rt_kprintf(" key4, press repeat! %d \n", __LINE__);
+        break;
+	case SINGLE_CLICK:
+        rt_kprintf(" key4, single click! %d \n", __LINE__);
+        break;
+	case DOUBLE_CLICK:
+        rt_kprintf(" key4, double click! %d \n", __LINE__);
+        break;
+	case LONG_RRESS_START:
+        rt_kprintf(" key4, long press start! %d \n", __LINE__);
+        break;
+	case LONG_PRESS_HOLD:
+        rt_kprintf(" key4, long press hold! %d \n", __LINE__);
+        break;
+    default:
+        break;
+    }
+
+}
+
 static rt_uint8_t read_key1_pindata(void)
 {
     return rt_pin_read(KEY1_BTN);
@@ -213,6 +271,10 @@ static rt_uint8_t read_key2_pindata(void)
 static rt_uint8_t read_key3_pindata(void)
 {
     return rt_pin_read(KEY3_BTN);
+}
+static rt_uint8_t read_key4_pindata(void)
+{
+    return rt_pin_read(KEY4_BTN);
 }
 
 static void gpio_irq_callback(void *args)
@@ -227,6 +289,9 @@ static void gpio_irq_callback(void *args)
     } else if (data == KEY3_BTN) {
         rt_kprintf(" key3 btn callback! %d \n", __LINE__);
         mst_btn_timer.bf_key3rd = 1;
+    } else if (data == KEY4_BTN) {
+        rt_kprintf(" key4 btn callback! %d \n", __LINE__);
+        mst_btn_timer.bf_key4th = 1;
     }
 
      // 启动定时器
@@ -242,7 +307,8 @@ static void btn_timer_callback(void *params)
     if ((mst_btn_timer.bfwork == 1) 
      && (mst_btn_timer.bf_key1st == 0)
      && (mst_btn_timer.bf_key2nd == 0)
-     && (mst_btn_timer.bf_key3rd == 0)) {
+     && (mst_btn_timer.bf_key3rd == 0)
+     && (mst_btn_timer.bf_key4th == 0)) {
         if (mst_btn_timer.delay_cnt++ >= LOOSE_BTN_DEF_TIME) {
             mst_btn_timer.delay_cnt = 0;
             mst_btn_timer.bfwork = 0;

@@ -19,9 +19,6 @@
 #define LED6_PIN    GET_PIN(A, 10)          // LED4
 
 
-
-
-
 int main(void)
 {
     int count = 1;
